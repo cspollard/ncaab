@@ -1,11 +1,16 @@
 # game class.
-from team import team
-from hashlib import new as newhash
+from hashlib import md5
 
 class game:
     def __init__(self, date, teams, scores, home):
-        self._idx = newhash(str(date) + str(team[0]) +
-                str(team[1])).hexdigest()
+        # need to sort before hashing.
+        if teams[0] > teams[1]:
+            teams.reverse()
+            scores.reverse()
+            home = {-1:-1, 0:1, 1:0}[home]
+
+        self._idx = md5(str(date) + str(teams[0]) +
+                str(teams[1])).hexdigest()
         self._date = date
         self._teams = teams
         self._scores = scores
@@ -27,7 +32,7 @@ class game:
             self._loser = 0
 
     def __eq__(self, g):
-        return self.idx() == g.idx()
+        return self._idx == g.idx()
 
     def idx(self):
         return self._idx
