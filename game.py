@@ -58,8 +58,24 @@ class game:
     def loser_score(self):
         return self._scores[self._loser]
 
-    def score_diff(self):
-        return self._scores[self._winner] - self._scores[self._loser]
+    def score_diff(self, t=None):
+        if self.loser() == t:
+            return self._scores[self._loser] - \
+                self._scores[self._winner]
+        else: 
+            return self._scores[self._winner] - \
+                self._scores[self._loser]
+
+    def score(self, t):
+        if t == self.loser():
+            return self.loser_score()
+        elif t == self.winner():
+            return self.winner_score()
+        else:
+            return 0
+
+    def home(self):
+        return self._home
 
     def home_team(self):
         if self._home == -1:
