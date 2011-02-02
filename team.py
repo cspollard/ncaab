@@ -14,6 +14,7 @@ class team:
         self._wfrac = 0
         self._lfrac = 0
         self._is_locked = False
+        self._value = 0
 
     def __eq__(self, t):
         return self.idx() == t.idx()
@@ -29,7 +30,7 @@ class team:
         for game in self._games:
             if not self._in_game(game):
                 self._games.remove(game)
-            elif self._did_win(game):
+            elif self.did_win(game):
                 self._nwins += 1
             else:
                 self._nlosses += 1
@@ -38,17 +39,17 @@ class team:
         if not self._ngames:
             return
 
-        self._opponents = map(self._opponent, self._games)
+        self._opponents = map(self.opponent, self._games)
         self._wfrac = float(self._nwins) / float(self._ngames)
         self._lfrac = float(self._nlosses) / float(self._ngames)
 
     def _in_game(self, game):
         return self in game.teams()
 
-    def _did_win(self, game):
+    def did_win(self, game):
         return game.winner() == self
 
-    def _opponent(self, game):
+    def opponent(self, game):
         if game.teams()[0] == self:
             return game.teams()[1]
         elif game.teams()[1] == self:
@@ -69,9 +70,27 @@ class team:
     def unlock(self):
         self._is_locked = False
 
+    def games(self):
+        return self._games
+
+    def ngames(self):
+        return self._ngames
+
+    def nwins(self):
+        return self._nwins
+
+    def nlosses(self):
+        return self._nlosses
+
     def add_games(self, games):
         for game in games:
             if game not in self._games:
                 self._games.append(game)
 
         self._update()
+
+    def value(self):
+        return self._value
+
+    def set_value(self, val):
+        self._value = val
