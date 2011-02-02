@@ -3,6 +3,7 @@ from team import team
 from game import game
 from math import exp
 import random
+from datetime import datetime
 
 class alg:
     def __init__(self, teams, games):
@@ -15,21 +16,26 @@ class alg:
             games = t.games()
             val = 0.0
             for g in games:
-                val += self.curve((1+t.opponent(g).value()) *
-                        g.score_diff(t))
+                diff = g.score_diff(t)
+                val += self.val_diff(t, g)
+
             val /= t.ngames()
 
             t.set_value(val)
 
+    def val_diff(self, t, g):
+        oppval = t.opponent(g).value()
+        score_diff = g.score_diff(t)
+        pm = {False: -1, True: 1}[score_diff > 0]
+        return self.curve((1 + pm*oppval) * score_diff) * \
+                self.decay((datetime.now() - g.date()).days)
+
     def curve(self, val):
-        val = val/10
+        # val = val/10.0
         return (exp(val)-exp(-val))/(exp(val)+exp(-val))
 
-    def decay(self, val):
-        return exp(-val)
-
-    def day_diff(self, d1, d2):
-        return (d1-d2)/86400000000
+    def decay(self, t):
+        return exp(-t/64.0)
 
     def teams(self):
         return self._teams
