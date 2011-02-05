@@ -47,6 +47,7 @@ class crawler:
 
     def _initialize(self):
         print "initializing..."
+        stdout.flush()
         tmp = urllib2.urlopen(self._rooturl)
         tmp = BeautifulSoup.BeautifulSoup(tmp.read()).findAll("a",
                 href=re.compile("/teams/"))
@@ -85,10 +86,12 @@ class crawler:
             tmp = urllib2.urlopen(url)
         except urllib2.HTTPError:
             print "couldn't reach %s.\nexiting thread." % url
+            stdout.flush()
             lock.release()
             return
 
         print "retrieving data for %s..." % t.name()
+        stdout.flush()
 
         tmp = BeautifulSoup.BeautifulSoup(tmp.read())
         tmp = tmp.find(lambda tag: tag.tr and tag.tr.td and
@@ -133,16 +136,19 @@ class crawler:
                 print tmpgame.teams()[0].name(), "vs", \
                     tmpgame.teams()[1].name(), '\t', \
                     tmpgame.scores()[0], '-', tmpgame.scores()[1]
-
                 stdout.flush()
+
             else:
                 print t.name(), "vs", opp.name(), \
                     tmpgame.date().strftime("%Y %m %d"), "already in \
                     database. ignoring..."
+                stdout.flush()
 
         t.add_games(tmpgames)
         print "finished retrieving data for %s." % t.name()
+        stdout.flush()
         print len(self._games), "indexed so far."
+        stdout.flush()
 
         t.lock()
 
