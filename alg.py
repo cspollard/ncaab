@@ -5,11 +5,17 @@ from math import exp
 import random
 from datetime import datetime
 
+debug = True
+
 class alg:
     def __init__(self, teams, games):
         self._teams = teams
         self._games = games
 
+    def randomize(self):
+        random.seed()
+        for t in self._teams.itervalues():
+            t.set_value(2*random.random() - 1)
 
     def loop(self):
         for t in self._teams.itervalues():
@@ -22,20 +28,21 @@ class alg:
             val /= t.ngames()
 
             t.set_value(val)
+            if debug:
+                print "setting", t.name() + ":", val
 
     def val_diff(self, t, g):
         oppval = t.opponent(g).value()
         score_diff = g.score_diff(t)
-        pm = {False: -1, True: 1}[score_diff > 0]
-        return self.curve((1 + pm*oppval) * score_diff) * \
-                self.decay((datetime.now() - g.date()).days)
+        return (self.curve(score_diff) + oppval) / 2 * \
+            self.decay((datetime.now() - g.date()).days)
 
     def curve(self, val):
-        # val = val/10.0
+        val = val/10.0
         return (exp(val)-exp(-val))/(exp(val)+exp(-val))
 
     def decay(self, t):
-        return exp(-t/64.0)
+        return exp(-t/120.0)
 
     def teams(self):
         return self._teams
