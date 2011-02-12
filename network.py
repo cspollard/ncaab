@@ -1,7 +1,4 @@
-from random import randint
-
-DEBUG = True
-
+# node, edge, and network classes.
 
 class node:
     def __init__(self, idx):
@@ -33,17 +30,11 @@ class edge:
     def set(self, n, v, w):
         self.values[n] = (self.ivals[n] + w*v)/(1 + w)
 
+    def setival(self, n, v):
+        self.ivals[n] = v
+
     def value(self, n):
         return self.values[n]
-
-    def othernode(self, n):
-        if n is self.nodes[0]:
-            return self.nodes[1]
-        else:
-            return self.nodes[0]
-
-    def inedge(self, n):
-        return n in self.nodes
 
 
 class network:
@@ -63,8 +54,8 @@ class network:
         return m.edge(n)
 
     def update(self, k, l, y):
-        tmp = 0.0
-        w = 0
+        v = 0.0
+        w = 0.0
         for m in k.edges.keys():
             if m is l:
                 continue
@@ -82,10 +73,10 @@ class network:
                 if b < 1 or c < 1:
                     continue
 
-                tmp += a*c/b
+                v += a*c/b
                 w += y
 
-        edge(k, l).set(k, tmp, w)
+        edge(k, l).set(k, v, w)
 
     def dump(self):
         for m in nodes:
