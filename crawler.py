@@ -54,6 +54,7 @@ class crawler:
 
         self._urllist = [tag["href"] for tag in tmp]
         for url in self._urllist:
+            url = url.replace("%26", "&")
             teamname = url.split('/')[-1][0:-5]
             t = team(teamname)
             self._teams.setdefault(teamname, t)

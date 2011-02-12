@@ -5,7 +5,7 @@ from math import exp
 import random
 from datetime import datetime
 
-debug = True
+debug = False
 
 class alg:
     def __init__(self, teams, games):
@@ -34,11 +34,11 @@ class alg:
     def val_diff(self, t, g):
         oppval = t.opponent(g).value()
         score_diff = g.score_diff(t)
-        return (self.curve(score_diff) + oppval) / 2 * \
+        return (self.curve(score_diff) + oppval) * \
             self.decay((datetime.now() - g.date()).days)
 
     def curve(self, val):
-        val = val/10.0
+        val = val/50.0
         return (exp(val)-exp(-val))/(exp(val)+exp(-val))
 
     def decay(self, t):
