@@ -19,6 +19,9 @@ class team:
     def __eq__(self, t):
         return self.idx() == t.idx()
 
+    def __hash__(self):
+        return id(self)
+
     def _update(self):
         self._ngames = 0
         self._nwins = 0

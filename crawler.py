@@ -44,7 +44,6 @@ class crawler:
             t1.add_games([g])
             t2.add_games([g])
 
-
     def _initialize(self):
         print "initializing..."
         stdout.flush()

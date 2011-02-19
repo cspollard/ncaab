@@ -14,6 +14,9 @@ class node:
     def __lt__(self, n):
         return self.idx < n.idx
 
+    def __hash__(self):
+        return id(self)
+
     def edge(self, n):
         return self.edges[n]
 
@@ -28,10 +31,14 @@ class edge:
         self.ivals = {m: 0.0, n: 0.0}
 
     def set(self, n, v, w):
-        self.values[n] = (self.ivals[n] + w*v)/(1 + w)
+        if self.ivals[n] > 1:
+            self.values[n] = (self.ivals[n] + v)/(1 + w)
+        else:
+            self.values[n] = v/w
 
     def setival(self, n, v):
         self.ivals[n] = v
+        self.values[n] = v
 
     def value(self, n):
         return self.values[n]
@@ -61,7 +68,7 @@ class network:
                 continue
 
             a = k.edge(m).value(k)
-            if a < 1:
+            if a < y:
                 continue
 
             for n in m.edges.keys():
@@ -70,18 +77,19 @@ class network:
 
                 b = m.edge(n).value(n)
                 c = n.edge(l).value(n)
-                if b < 1 or c < 1:
+                if b < y or c < y:
                     continue
 
                 v += a*c/b
                 w += y
 
-        edge(k, l).set(k, v, w)
+        if w > 0 and v > 0:
+            edge(k, l).set(k, y*v, w)
 
     def dump(self):
-        for m in nodes:
+        for m in self.nodes:
             print "node %3d:" % m.idx
-            for n in nodes:
+            for n in self.nodes:
                 if m is not n:
                     e = self.edge(m, n)
                     print "\t%03.0f\t%03.0f: node %03d" % (e.value(m),
