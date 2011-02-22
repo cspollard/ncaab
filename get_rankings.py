@@ -22,7 +22,7 @@ def gcmp(g1, g2):
 c = crawler(argv[1])
 a = alg(c.teams(), c.games())
 
-a.loop(50000)
+a.loop()
 
 teams = a.teams().values()
 teams.sort(cmp=tcmp)
@@ -48,19 +48,18 @@ for t in teams:
     sigma = 0
 
     for g in games:
-        x = (g.score_ratio(t) - a.val_ratio(t,g)) * \
-                a.decay((n - g.date()).days)/t.opponent(g).value()
+        # x = (g.score_ratio(t) - a.val_ratio(t,g)) * \
+                # a.decay((n - g.date()).days)/t.opponent(g).value()
 
         opp = t.opponent(g)
-        print "\t%03d-%03d\t%20s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
-                opp.name()[:20], opp.value(), x)
+        print "\t%03d-%03d\t%20s (%+6f)" % (g.score(t), g.score(opp), \
+                opp.name()[:20], opp.value())
 
         sos += opp.value()
-        mu += x
-        sigma += x*x
+        # mu += x
+        # sigma += x*x
 
-    print "\t\tSOS: %+6f\tAVG: %+6f\tSTDDEV (mu=0): %+6f" % \
-            (sos/t.ngames(), mu/t.ngames(), sigma/t.ngames())
+    print "\t\tSOS: %+6f" % (sos/t.ngames())
 
     print
     print
