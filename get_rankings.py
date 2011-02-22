@@ -38,17 +38,14 @@ for g in games:
 a = alg(scores)
 vec = a.minimize()
 
-print vec
-
 map(lambda (t,v): t.set_value(v), zip(teams, vec))
-
 
 teams.sort(cmp=tcmp)
 teams.reverse()
 
 for t in teams:
-    print "%20s\t%02d-%02d\t%+6f" % (t.name()[:20], t.nwins(), \
-            t.nlosses(), t.value())
+    print "%20s\t%02d-%02d\t%+6f\t%+6f" % (t.name()[:20], t.nwins(), \
+            t.nlosses(), t.value(), t.value()/teams[0].value())
 
 """
 print
