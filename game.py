@@ -66,6 +66,14 @@ class game:
             return self._scores[self._winner] - \
                 self._scores[self._loser]
 
+    def score_ratio(self, t=None):
+        if self.loser() == t:
+            return float(self._scores[self._loser]) / \
+                self._scores[self._winner]
+        else: 
+            return float(self._scores[self._winner]) / \
+                self._scores[self._loser]
+
     def score(self, t):
         if t == self.loser():
             return self.loser_score()

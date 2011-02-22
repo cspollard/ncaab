@@ -14,7 +14,7 @@ class team:
         self._wfrac = 0
         self._lfrac = 0
         self._is_locked = False
-        self._value = 0
+        self._value = .5
 
     def __eq__(self, t):
         return self.idx() == t.idx()
@@ -97,3 +97,10 @@ class team:
 
     def set_value(self, val):
         self._value = val
+
+    def add_value(self, v):
+        self._value += v
+        if self._value <= .1:
+            self._value = .1
+
+        return v

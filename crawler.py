@@ -94,8 +94,8 @@ class crawler:
         stdout.flush()
 
         tmp = BeautifulSoup.BeautifulSoup(tmp.read())
-        tmp = tmp.find(lambda tag: tag.tr and tag.tr.td and
-            tag.tr.td.string and tag.tr.td.string == "Date")
+        tmp = tmp.find(lambda tag: tag.tr and tag.tr.th and
+            tag.tr.th.string and tag.tr.th.string == "Date")
         tmp = tmp.findChildren(lambda tag: tag.findAll("a",
             href=re.compile("/teams/")), recursive=False)
 
