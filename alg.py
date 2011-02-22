@@ -7,7 +7,7 @@ from game import game
 from datetime import datetime
 from math import sqrt
 
-debug = True
+debug = False
 
 class alg:
     def __init__(self, scores):
