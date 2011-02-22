@@ -6,6 +6,7 @@ from team import team
 from game import game
 from datetime import datetime
 from math import sqrt
+from random import choice
 
 debug = False
 
@@ -17,14 +18,13 @@ class alg:
 
     def minimize(self):
         k = 0
-        while k < 50:
+        ls = list(xrange(self.l))
+        while k < 50000:
             k += 1
-            for i in xrange(self.l):
-                a = sum([self.mat[j][i] for j in xrange(self.l)])
-                b = sum([self.mat[i][j]*self.vec[j] for j in
-                    xrange(self.l)])
-                self.vec[i] = b/a
-
-                # print self.vec[i]
+            i = choice(ls)
+            a = sum([self.mat[j][i] for j in xrange(self.l)])
+            b = sum([self.mat[i][j]*self.vec[j] for j in
+                xrange(self.l)])
+            self.vec[i] = b/a
 
         return self.vec
