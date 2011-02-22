@@ -2,6 +2,8 @@ from crawler import crawler
 from alg import alg
 from sys import argv, stdout
 import datetime
+from numpy import zeros
+from math import sqrt
 
 def tcmp(t1, t2):
     if t1.value() > t2.value():
@@ -20,11 +22,27 @@ def gcmp(g1, g2):
         return 0
 
 c = crawler(argv[1])
-a = alg(c.teams(), c.games())
+teams = c.teams().values()
+games = c.games().values()
+l = len(teams)
+scores = zeros((l, l))
 
-a.loop()
+team_dict = dict(zip(teams, xrange(l)))
 
-teams = a.teams().values()
+for g in games:
+    t1, t2 = g.teams()
+    p1, p2 = g.score(t1), g.score(t2)
+    scores[team_dict[t1]][team_dict[t2]] += p1
+    scores[team_dict[t2]][team_dict[t1]] += p2
+
+a = alg(scores)
+vec = a.minimize()
+
+print vec
+
+map(lambda (t,v): t.set_value(v), zip(teams, vec))
+
+
 teams.sort(cmp=tcmp)
 teams.reverse()
 
@@ -32,6 +50,7 @@ for t in teams:
     print "%20s\t%02d-%02d\t%+6f" % (t.name()[:20], t.nwins(), \
             t.nlosses(), t.value())
 
+"""
 print
 print
 
@@ -63,3 +82,5 @@ for t in teams:
 
     print
     print
+
+    """
