@@ -1,9 +1,9 @@
 from crawler import crawler
 from alg import alg
 from sys import argv, stdout
-import datetime
+from datetime import datetime
 from numpy import zeros
-from math import sqrt
+from math import sqrt, exp
 
 def tcmp(t1, t2):
     if t1.value() > t2.value():
@@ -21,6 +21,9 @@ def gcmp(g1, g2):
     else:
         return 0
 
+def decay(t):
+    return exp(-t/10.)
+
 c = crawler(argv[1])
 teams = c.teams().values()
 games = c.games().values()
@@ -29,9 +32,11 @@ scores = zeros((l, l))
 
 team_dict = dict(zip(teams, xrange(l)))
 
+n = datetime.now()
 for g in games:
     t1, t2 = g.teams()
     p1, p2 = g.score(t1), g.score(t2)
+    # d = decay((n-g.date()).days)
     scores[team_dict[t1]][team_dict[t2]] += p1
     scores[team_dict[t2]][team_dict[t1]] += p2
 
@@ -43,41 +48,33 @@ map(lambda (t,v): t.set_value(v), zip(teams, vec))
 teams.sort(cmp=tcmp)
 teams.reverse()
 
+
+rank = 0
 for t in teams:
-    print "%20s\t%02d-%02d\t%+6f\t%+6f" % (t.name()[:20], t.nwins(), \
-            t.nlosses(), t.value(), t.value()/teams[0].value())
+    rank += 1
+    print "%3d) %20s\t%02d-%02d\t%+6f" % (rank, t.name()[:20], t.nwins(), \
+            t.nlosses(), t.value())
 
-"""
-print
-print
-
-n = datetime.datetime.now()
+print "\t\t\tEnergy = %+6f" % (a.E())
+stdout.flush()
 
 for t in teams:
+    print
+    print
+
     print "%20s\t%02d-%02d\t%+6f" % (t.name()[:20], t.nwins(), \
             t.nlosses(), t.value())
 
     games = t.games()
     games.sort(cmp=gcmp)
+
     sos = 0
-    mu = 0
-    sigma = 0
-
     for g in games:
-        # x = (g.score_ratio(t) - a.val_ratio(t,g)) * \
-                # a.decay((n - g.date()).days)/t.opponent(g).value()
-
         opp = t.opponent(g)
-        print "\t%03d-%03d\t%20s (%+6f)" % (g.score(t), g.score(opp), \
-                opp.name()[:20], opp.value())
+        print "\t%03d-%03d\t%20s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
+                opp.name()[:20], opp.value(),
+                a.contribution(team_dict[t], team_dict[t.opponent(g)]))
 
         sos += opp.value()
-        # mu += x
-        # sigma += x*x
 
     print "\t\tSOS: %+6f" % (sos/t.ngames())
-
-    print
-    print
-
-    """

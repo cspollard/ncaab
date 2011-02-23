@@ -12,19 +12,28 @@ debug = False
 
 class alg:
     def __init__(self, mat):
-        self.mat = mat
+        self.mat = array(mat)
         self.l = len(self.mat)
-        self.vec = (ones(self.l) + randn(self.l)/10)/sqrt(len(self.mat))
+        self.vec = randn(self.l)**2
+        self.colsums = self.mat.sum(axis=0)
 
-    def minimize(self):
+    def minimize(self, kmax=50000):
         k = 0
         ls = list(xrange(self.l))
-        while k < 50000:
+        while k < kmax:
             k += 1
             i = choice(ls)
-            a = sum([self.mat[j][i] for j in xrange(self.l)])
-            b = sum([self.mat[i][j]*self.vec[j] for j in
-                xrange(self.l)])
-            self.vec[i] = b/a
+            self.vec[i] = sum([self.mat[i][j]*self.vec[j] for j in
+                    xrange(self.l)])/self.colsums[i]
 
+        m = max(self.vec)
+        self.vec /= m
         return self.vec
+
+    def contribution(self, i, j):
+        return self.mat[i][j]*self.vec[j]/self.colsums[i]
+
+    def E(self):
+        return .5*sum([sum([self.mat[j][i]*self.vec[i] -
+            self.mat[i][j]*self.vec[j] for j in xrange(i+1, self.l)])
+            for i in xrange(self.l)])**2
