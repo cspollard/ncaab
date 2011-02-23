@@ -1,12 +1,10 @@
 # alg class
-from numpy import array, ones
+from numpy import array, empty, linalg, zeros
 from numpy.random import randn
-from scipy.optimize import fmin_ncg as fmin
 from team import team
 from game import game
 from datetime import datetime
 from math import sqrt
-from random import choice
 
 debug = False
 
@@ -14,17 +12,22 @@ class alg:
     def __init__(self, mat):
         self.mat = array(mat)
         self.l = len(self.mat)
-        self.vec = randn(self.l)**2
+        self.vec = empty(self.l)
+        self.conts = empty((self.l, self.l))
         self.colsums = self.mat.sum(axis=0)
 
-    def minimize(self, kmax=50000):
-        k = 0
-        ls = list(xrange(self.l))
-        while k < kmax:
-            k += 1
-            i = choice(ls)
-            self.vec[i] = sum([self.mat[i][j]*self.vec[j] for j in
-                    xrange(self.l)])/self.colsums[i]
+    def minimize(self):
+        for i in xrange(self.l):
+            for j in xrange(self.l):
+                self.conts[i][j] = self.mat[i][j]/self.colsums[i]
+                if i == j:
+                    self.conts[i][j] -= .5
+
+        a = linalg.svd(self.conts)
+
+        print a
+
+        self.vec = a[-1][-1]
 
         m = max(self.vec)
         self.vec /= m
