@@ -1,5 +1,6 @@
 # alg class
 from numpy import array, empty, linalg, zeros
+from numpy import abs as nabs
 from numpy.random import randn
 from team import team
 from game import game
@@ -19,15 +20,14 @@ class alg:
     def minimize(self):
         for i in xrange(self.l):
             for j in xrange(self.l):
-                self.conts[i][j] = self.mat[i][j]/self.colsums[i]
                 if i == j:
-                    self.conts[i][j] -= .5
+                    self.conts[i][j] = -self.colsums[i]
+                else:
+                    self.conts[i][j] = self.mat[i][j]
 
         a = linalg.svd(self.conts)
 
-        print a
-
-        self.vec = a[-1][-1]
+        self.vec = nabs(a[-1][-1])
 
         m = max(self.vec)
         self.vec /= m
