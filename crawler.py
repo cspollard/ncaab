@@ -13,15 +13,14 @@ from game import game
 class crawler:
     def __init__(self, filename=None):
         if filename:
-            self._load_from_file(filename)
+            self.load_from_file(filename)
         else:
-            self._rooturl = "http://www.rpiforecast.com/live-rpi.html"
-            self._urllist = []
-            self._teams = {} 
-            self._games = {} 
-            self._initialize()
+            self.rooturl = "http://kenpom.com/cbbga11.txt"
+            self.teamsdict = {} 
+            self.gamesdict = {} 
+            self.initialize()
 
-    def _load_from_file(self, filename):
+    def load_from_file(self, filename):
         f = open(filename, "r")
         lines = f.readlines()
         f.close()
@@ -44,116 +43,65 @@ class crawler:
             t1.add_games([g])
             t2.add_games([g])
 
-    def _initialize(self):
+    def initialize(self):
         print "initializing..."
         stdout.flush()
-        tmp = urllib2.urlopen(self._rooturl)
-        tmp = BeautifulSoup.BeautifulSoup(tmp.read()).findAll("a",
-                href=re.compile("/teams/"))
+        tmp = urllib2.urlopen(self.rooturl)
+        lines = tmp.read().split('\n')
 
-        self._urllist = [tag["href"] for tag in tmp]
-        for url in self._urllist:
-            url = url.replace("%26", "&")
-            teamname = url.split('/')[-1][0:-5]
-            t = team(teamname)
-            self._teams.setdefault(teamname, t)
+        for line in lines:
+            data = line.split()
+            scores = []
+            i = 2
+            while 1:
+                try:
+                    scores.append(int(data[i]))
+                    break
+                except ValueError:
+                    i += 1
 
-    def crawl(self, nthreads):
-
-        locks = []
-        threads = []
-        i = 0
-        while i < nthreads:
-            locks.append(Lock())
-            i += 1
-
-        i = 0
-        for t in self._teams.itervalues():
-            threads.append(Thread(target=self.get_games, args=(t,
-                locks[i % nthreads])))
-            threads[i].start()
-            i += 1
-
-    def get_games(self, t, lock=None):
-        if lock:
-            lock.acquire()
-
-        # TODO
-        # this is ugly.
-        url = "http://www.rpiforecast.com/teams/%s.html" % t.name()
-        url = urllib2.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
-        try:
-            tmp = urllib2.urlopen(url)
-        except urllib2.HTTPError:
-            print "couldn't reach %s.\nexiting thread." % url
-            stdout.flush()
-            lock.release()
-            return
-
-        print "retrieving data for %s..." % t.name()
-        stdout.flush()
-
-        tmp = BeautifulSoup.BeautifulSoup(tmp.read())
-        tmp = tmp.find(lambda tag: tag.tr and tag.tr.th and
-            tag.tr.th.string and tag.tr.th.string == "Date")
-        tmp = tmp.findChildren(lambda tag: tag.findAll("a",
-            href=re.compile("/teams/")), recursive=False)
-
-        tmpgames = []
-        for g in tmp:
-            numbers = g.findAll(text=re.compile("[0-9]+\-[0-9]+"))
-            scores = map(int, numbers[-1].string.split("-"))
-            if scores == [0, 0]:
-                continue
-
-            # account for larger score always coming first.
-            if g.find("td", text=re.compile("^[L]$")):
-                scores.reverse()
-
-            opp = g.find("a")["href"].split('/')[-1][0:-5]
-            if opp not in self._teams:
-                continue
-
-            opp = self._teams[opp]
-            if opp.is_locked():
-                continue
-
-            (month, day) = map(int, numbers[0].string.split('-'))
-            year = datetime.now().year
-            if month > 7:
-                year -= 1
-            date = datetime(year, month, day)
-
-            home = {"A":1, "H":0, "N":-1}[g.find("td",
-                text=re.compile("^[AHN]$")).string]
-
-            tmpgame = game(date, [t, opp], scores, home)
-            if tmpgame.idx() not in self._games: 
-                self._games[tmpgame.idx()] = tmpgame
-                tmpgames.append(tmpgame)
-                opp.add_games([tmpgame])
-
-                print tmpgame.teams()[0].name(), "vs", \
-                    tmpgame.teams()[1].name(), '\t', \
-                    tmpgame.scores()[0], '-', tmpgame.scores()[1]
-                stdout.flush()
-
+            if i == 2:
+                teamname1 = data[1]
             else:
-                print t.name(), "vs", opp.name(), \
-                    tmpgame.date().strftime("%Y %m %d"), "already in \
-                    database. ignoring..."
-                stdout.flush()
+                teamname1 = " ".join(data[1:i])
 
-        t.add_games(tmpgames)
-        print "finished retrieving data for %s." % t.name()
-        stdout.flush()
-        print len(self._games), "indexed so far."
-        stdout.flush()
+            print teamname1
+            if teamname1 not in self.teamsdict:
+                self.teamsdict[teamname1] = team(teamname1)
 
-        t.lock()
+            j = i+2
+            while 1:
+                try:
+                    scores.append(int(data[j]))
+                    break
+                except ValueError:
+                    j += 1
 
-        if lock:
-            lock.release()
+            if j == i+2:
+                teamname2 = data[j]
+            else:
+                teamname2 = " ".join(data[i+2:j])
+
+            print teamname2
+            if teamname2 not in self.teamsdict:
+                self.teamsdict[teamname2] = team(teamname2)
+
+            teams = [self.teamsdict[teamname1], self.teamsdict[teamname2]]
+            scores = [int(data[i+1]), int(data[j+1])]
+
+            d = datetime.strptime(data[0], "%m/%d/%Y")
+
+            if len(data) > 5:
+                if data[5] == 'N':
+                    home = -1
+                else:
+                    home = 1
+
+            g = game(date, teams, scores, home)
+            self.gamesdict[g.idx()] = g
+
+            self.teamsdict[data[1]].add_games[[g]]
+            self.teamsdict[data[3]].add_games[[g]]
 
     def save(self, filename):
         f = open(filename, "w")
@@ -167,8 +115,8 @@ class crawler:
         f.close()
 
     def teams(self):
-        return self._teams
+        return self.teams
 
     def games(self):
-        return self._games
+        return self.games
 
