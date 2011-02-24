@@ -1,12 +1,10 @@
 import crawler
-import threading
-import time
+from sys import argv
+
+if len(argv) < 2:
+    print "please provide a filename to save to."
+    exit()
 
 a = crawler.crawler()
 
-a.crawl(20)
-
-while threading.active_count() > 1:
-    time.sleep(1)
-
-a.save("crawler.save")
+a.save(argv[1])
