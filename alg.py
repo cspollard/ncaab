@@ -15,15 +15,16 @@ class alg:
         self.l = len(self.mat)
         self.vec = empty(self.l)
         self.conts = empty((self.l, self.l))
-        self.colsums = self.mat.sum(axis=0)
+        self.colsums = [sum(self.mat[j][i]**2 for j in xrange(self.l))
+                for i in xrange(self.l)]
 
     def minimize(self):
         for i in xrange(self.l):
             for j in xrange(self.l):
                 if i == j:
-                    self.conts[i][j] = -self.colsums[i]
+                    self.conts[i][j] = self.colsums[i]
                 else:
-                    self.conts[i][j] = self.mat[i][j]
+                    self.conts[i][j] = -self.mat[i][j]*self.mat[j][i]
 
         a = linalg.svd(self.conts)
 
@@ -37,6 +38,6 @@ class alg:
         return self.mat[i][j]*self.vec[j]/self.colsums[i]
 
     def E(self):
-        return .5*sum([sum([self.mat[j][i]*self.vec[i] -
-            self.mat[i][j]*self.vec[j] for j in xrange(i+1, self.l)])
-            for i in xrange(self.l)])**2
+        return .5*sum([sum([(self.mat[j][i]*self.vec[i] -
+            self.mat[i][j]*self.vec[j])**2 for j in xrange(i+1, self.l)])
+            for i in xrange(self.l)])
