@@ -15,8 +15,8 @@ class alg:
         self.l = len(self.mat)
         self.vec = empty(self.l)
         self.conts = empty((self.l, self.l))
-        self.colsums = [sum(self.mat[j][i]**2 for j in xrange(self.l))
-                for i in xrange(self.l)]
+        self.colsums = [sum([self.mat[j][i]**2 for j in
+            xrange(self.l)]) for i in xrange(self.l)]
 
     def minimize(self):
         for i in xrange(self.l):
