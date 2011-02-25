@@ -5,6 +5,11 @@ if len(argv) < 2:
     print "please provide a filename to save to."
     exit()
 
-a = crawler.crawler()
+if len(argv) > 2:
+    url = argv[2]
+else:
+    url = None
+
+a = crawler.crawler(url=url)
 
 a.save(argv[1])

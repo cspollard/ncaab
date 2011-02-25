@@ -30,10 +30,10 @@ class team:
         self._wfrac = 0
         self._lfrac = 0
 
-        for game in self._games:
-            if not self._in_game(game):
-                self._games.remove(game)
-            elif self.did_win(game):
+        for g in self._games:
+            if not self._in_game(g):
+                self._games.remove(g)
+            elif self.did_win(g):
                 self._nwins += 1
             else:
                 self._nlosses += 1
@@ -91,6 +91,14 @@ class team:
                 self._games.append(game)
 
         self._update()
+
+    def remove_game(self, g):
+        if g in self._games:
+            self._games.remove(g)
+            self._update()
+        else:
+            print "attempting to remove nonexistent game"
+            print t.name(), t.opponent(g).name(), g.date()
 
     def value(self):
         return self._value

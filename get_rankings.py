@@ -21,22 +21,37 @@ def gcmp(g1, g2):
     else:
         return 0
 
-def decay(t):
-    return exp(-t/10.)
-
-c = crawler(argv[1])
+c = crawler(filename=argv[1])
 teams = c.teams().values()
 games = c.games().values()
+
+for t in teams:
+    if t.ngames() < 5:
+        for g in t.games():
+            t.opponent(g).remove_game(g)
+            t.remove_game(g)
+            games.remove(g)
+
+        print "removing", t.name()
+        stdout.flush()
+        teams.remove(t)
+
+
 l = len(teams)
+team_dict = dict(zip(teams, xrange(l)))
 scores = zeros((l, l))
 
-team_dict = dict(zip(teams, xrange(l)))
-
 n = datetime.now()
+
 for g in games:
     t1, t2 = g.teams()
+    if t1 not in team_dict or t2 not in team_dict:
+        print "attempting to use nonexistent team."
+        print t1.name(), t2.name()
+        stdout.flush()
+        continue
+
     p1, p2 = g.score(t1), g.score(t2)
-    # d = decay((n-g.date()).days)
     scores[team_dict[t1]][team_dict[t2]] += p1
     scores[team_dict[t2]][team_dict[t1]] += p2
 
@@ -65,12 +80,16 @@ for t in teams:
     print "%20s\t%02d-%02d\t%+6f" % (t.name()[:20], t.nwins(), \
             t.nlosses(), t.value())
 
-    games = t.games()
-    games.sort(cmp=gcmp)
+    gs = t.games()
+    gs.sort(cmp=gcmp)
 
     sos = 0
-    for g in games:
+    for g in gs:
+        if g not in games:
+            continue
         opp = t.opponent(g)
+        if opp not in teams:
+            continue
         print "\t%03d-%03d\t%20s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
                 opp.name()[:20], opp.value(),
                 a.contribution(team_dict[t], team_dict[t.opponent(g)]))
