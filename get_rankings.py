@@ -25,32 +25,12 @@ c = crawler(filename=argv[1])
 teams = c.teams().values()
 games = c.games().values()
 
-for t in teams:
-    if t.ngames() < 5:
-        for g in t.games():
-            t.opponent(g).remove_game(g)
-            t.remove_game(g)
-            games.remove(g)
-
-        print "removing", t.name()
-        stdout.flush()
-        teams.remove(t)
-
-
 l = len(teams)
 team_dict = dict(zip(teams, xrange(l)))
 scores = zeros((l, l))
 
 n = datetime.now()
-
 for g in games:
-    t1, t2 = g.teams()
-    if t1 not in team_dict or t2 not in team_dict:
-        print "attempting to use nonexistent team."
-        print t1.name(), t2.name()
-        stdout.flush()
-        continue
-
     p1, p2 = g.score(t1), g.score(t2)
     scores[team_dict[t1]][team_dict[t2]] += p1
     scores[team_dict[t2]][team_dict[t1]] += p2
