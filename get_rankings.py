@@ -30,7 +30,6 @@ team_dict = dict(zip(teams, xrange(l)))
 scores = zeros((l, l))
 
 n = datetime.now()
-<<<<<<< HEAD
 
 home_tot = 0
 away_tot = 0
