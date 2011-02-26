@@ -30,6 +30,7 @@ team_dict = dict(zip(teams, xrange(l)))
 scores = zeros((l, l))
 
 n = datetime.now()
+<<<<<<< HEAD
 
 home_tot = 0
 away_tot = 0
@@ -94,9 +95,9 @@ for t in teams:
         opp = t.opponent(g)
         if opp not in teams:
             continue
-        print "\t%03d-%03d\t%20s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
-                opp.name()[:20], opp.value(),
-                a.contribution(team_dict[t], team_dict[t.opponent(g)]))
+        print "\t%03d-%03d\t%20s %s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
+                opp.name()[:20], {None: 'N', t: 'H', opp: 'A'}[g.home_team()], \
+                opp.value(), a.contribution(team_dict[t], team_dict[t.opponent(g)]))
 
         sos += opp.value()
 
