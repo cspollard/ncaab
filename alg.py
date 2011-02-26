@@ -7,8 +7,6 @@ from game import game
 from datetime import datetime
 from math import sqrt
 
-debug = False
-
 class alg:
     def __init__(self, mat):
         self.mat = array(mat)
@@ -31,11 +29,11 @@ class alg:
         self.vec = nabs(a[-1][-1])
 
         m = max(self.vec)
-        self.vec /= m
+        self.vec /=m
         return self.vec
 
     def contribution(self, i, j):
-        return self.mat[i][j]*self.vec[j]/self.colsums[i]
+        return self.mat[i][j]*self.mat[j][i]*self.vec[j]/self.colsums[i]
 
     def E(self):
         return .5*sum([sum([(self.mat[j][i]*self.vec[i] -

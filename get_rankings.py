@@ -31,6 +31,7 @@ scores = zeros((l, l))
 
 n = datetime.now()
 for g in games:
+    t1, t2 = g.teams()
     p1, p2 = g.score(t1), g.score(t2)
     scores[team_dict[t1]][team_dict[t2]] += p1
     scores[team_dict[t2]][team_dict[t1]] += p2
@@ -70,9 +71,9 @@ for t in teams:
         opp = t.opponent(g)
         if opp not in teams:
             continue
-        print "\t%03d-%03d\t%20s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
-                opp.name()[:20], opp.value(),
-                a.contribution(team_dict[t], team_dict[t.opponent(g)]))
+        print "\t%03d-%03d\t%20s %s (%+6f)\t%+6f" % (g.score(t), g.score(opp), \
+                opp.name()[:20], {None: 'N', t: 'H', opp: 'A'}[g.home_team()], \
+                opp.value(), a.contribution(team_dict[t], team_dict[t.opponent(g)]))
 
         sos += opp.value()
 
