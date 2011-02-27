@@ -71,7 +71,7 @@ teams.reverse()
 rank = 0
 for t in teams:
     rank += 1
-    print "%3d) %20s\t\t%02d-%02d\t\t%+6f" % (rank, t.name()[:20], t.nwins(), \
+    print "%3d) %25s\t%02d-%02d\t%+6f" % (rank, t.name()[:25], t.nwins(), \
             t.nlosses(), t.value())
 
 print "\t\t\tEnergy = %+6f" % (a.E())
