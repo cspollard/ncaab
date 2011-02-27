@@ -56,11 +56,11 @@ away_bonus = naway/(nhome+naway+nneut) * \
 neut_bonus = nneut/(nhome+naway+nneut) * \
         (home_tot+away_tot+neut_tot)/neut_tot
 
-print "home : %4d, home pts: %5d, home ppg: %3d" % (nhome,
+print "home : %4f, home pts: %5f, home ppg: %3f" % (nhome,
         home_tot, home_tot/nhome)
-print "away : %4d, away pts: %5d, away ppg: %3d" % (naway,
+print "away : %4f, away pts: %5f, away ppg: %3f" % (naway,
         away_tot, away_tot/naway)
-print "neut : %4d, neut pts: %5d, neut ppg: %3d" % (nneut,
+print "neut : %4f, neut pts: %5f, neut ppg: %3f" % (nneut,
         neut_tot, neut_tot/nneut)
 
 print "home bonus: %4f, away bonus: %4f, neut bonus: %4f" % \
