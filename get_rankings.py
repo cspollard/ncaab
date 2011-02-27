@@ -31,25 +31,45 @@ scores = zeros((l, l))
 
 n = datetime.now()
 
-home_tot = 0
-away_tot = 0
-haratios = 0
-nhomegames = 0
+home_tot = 0.
+away_tot = 0.
+neut_tot = 0.
+nhome = 0.
+nneut = 0.
 for g in games:
     if g.home() != -1:
         home_tot += g.score(g.home_team())
         away_tot += g.score(g.away_team())
-        haratios += g.score_ratio(g.home_team())
-        nhomegames += 1
+        nhome += 1
+    else:
+        neut_tot += sum(map(g.score, g.teams()))
+        nneut += 2
 
-home_bonus = (home_tot+away_tot)/(2.*home_tot)
-away_bonus = (home_tot+away_tot)/(2.*away_tot)
-print "home bonus: %4f, away bonus: %4f" % (home_bonus, away_bonus)
+naway = nhome
+
+home_bonus = nhome/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/home_tot
+
+away_bonus = naway/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/away_tot
+
+neut_bonus = nneut/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/neut_tot
+
+print "home : %4d, home pts: %5d, home ppg: %3d" % (nhome,
+        home_tot, home_tot/nhome)
+print "away : %4d, away pts: %5d, away ppg: %3d" % (naway,
+        away_tot, away_tot/naway)
+print "neut : %4d, neut pts: %5d, neut ppg: %3d" % (nneut,
+        neut_tot, neut_tot/nneut)
+
+print "home bonus: %4f, away bonus: %4f, neut bonus: %4f" % \
+    (home_bonus, away_bonus, neut_bonus)
 
 for g in games:
     if g.home() == -1:
         t1, t2 = g.teams()
-        p1, p2 = g.score(t1), g.score(t2)
+        p1, p2 = g.score(t1)*neut_bonus, g.score(t2)*neut_bonus
     else:
         t1, t2 = g.home_team(), g.away_team()
         p1 = g.score(t1)*home_bonus
