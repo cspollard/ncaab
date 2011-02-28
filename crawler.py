@@ -93,11 +93,11 @@ class crawler:
 
             d = datetime.strptime(data[0], "%m/%d/%Y")
 
-            if len(data) > 5:
-                if data[5] == 'N':
+            home = 1
+            if len(data) > j+1:
+                if data[j+1].upper().find('N') != -1:
                     home = -1
-                else:
-                    home = 1
+
 
             g = game(d, teams, scores, home)
             self.gamesdict[g.idx()] = g
