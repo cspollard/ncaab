@@ -95,7 +95,6 @@ class crawler:
 
             home = 1
             if len(data) > j+1:
-                print data[j+1]
                 if data[j+1].upper().find('N') != -1:
                     home = -1
 
