@@ -30,11 +30,54 @@ team_dict = dict(zip(teams, xrange(l)))
 scores = zeros((l, l))
 
 n = datetime.now()
+
+home_tot = 0.
+away_tot = 0.
+neut_tot = 0.
+nhome = 0.
+nneut = 0.
 for g in games:
-    t1, t2 = g.teams()
-    p1, p2 = g.score(t1), g.score(t2)
+    if g.home() != -1:
+        home_tot += g.score(g.home_team())
+        away_tot += g.score(g.away_team())
+        nhome += 1
+    else:
+        neut_tot += sum(map(g.score, g.teams()))
+        nneut += 2
+
+naway = nhome
+
+home_bonus = nhome/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/home_tot
+
+away_bonus = naway/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/away_tot
+
+neut_bonus = nneut/(nhome+naway+nneut) * \
+        (home_tot+away_tot+neut_tot)/neut_tot
+
+print "home : %4f, home pts: %5f, home ppg: %3f" % (nhome,
+        home_tot, home_tot/nhome)
+print "away : %4f, away pts: %5f, away ppg: %3f" % (naway,
+        away_tot, away_tot/naway)
+print "neut : %4f, neut pts: %5f, neut ppg: %3f" % (nneut,
+        neut_tot, neut_tot/nneut)
+
+print "home bonus: %4f, away bonus: %4f, neut bonus: %4f" % \
+    (home_bonus, away_bonus, neut_bonus)
+
+for g in games:
+    if g.home() == -1:
+        t1, t2 = g.teams()
+        p1, p2 = g.score(t1)*neut_bonus, g.score(t2)*neut_bonus
+    else:
+        t1, t2 = g.home_team(), g.away_team()
+        p1 = g.score(t1)*home_bonus
+        p2 = g.score(t2)*away_bonus
+
     scores[team_dict[t1]][team_dict[t2]] += p1
     scores[team_dict[t2]][team_dict[t1]] += p2
+
 
 a = alg(scores)
 vec = a.minimize()
