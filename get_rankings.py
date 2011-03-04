@@ -4,6 +4,7 @@ from sys import argv, stdout
 from datetime import datetime
 from numpy import zeros
 from math import sqrt, exp
+from team import team
 
 def tcmp(t1, t2):
     if t1.value() > t2.value():
@@ -62,7 +63,6 @@ print "away : %4f, away pts: %5f, away ppg: %3f" % (naway,
         away_tot, away_tot/naway)
 print "neut : %4f, neut pts: %5f, neut ppg: %3f" % (nneut,
         neut_tot, neut_tot/nneut)
-
 print "home bonus: %4f, away bonus: %4f, neut bonus: %4f" % \
     (home_bonus, away_bonus, neut_bonus)
 
@@ -75,9 +75,15 @@ for g in games:
         p1 = g.score(t1)*home_bonus
         p2 = g.score(t2)*away_bonus
 
-    scores[team_dict[t1]][team_dict[t2]].append(p1)
-    scores[team_dict[t2]][team_dict[t1]].append(p2)
+    if scores[team_dict[t1]][team_dict[t2]]:
+        scores[team_dict[t1]][team_dict[t2]].append(p1)
+    else:
+        scores[team_dict[t1]][team_dict[t2]] = [p1]
 
+    if scores[team_dict[t2]][team_dict[t1]]:
+        scores[team_dict[t2]][team_dict[t1]].append(p2)
+    else:
+        scores[team_dict[t2]][team_dict[t1]] = [p2]
 
 a = alg(scores)
 vec = a.minimize()
@@ -86,7 +92,6 @@ map(lambda (t,v): t.set_value(v), zip(teams, vec))
 
 teams.sort(cmp=tcmp)
 teams.reverse()
-
 
 rank = 0
 for t in teams:

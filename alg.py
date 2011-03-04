@@ -1,11 +1,7 @@
 # alg class
 from numpy import array, empty, linalg, zeros
 from numpy import abs as nabs
-from numpy.random import randn
-from team import team
-from game import game
 from datetime import datetime
-from math import sqrt
 
 class alg:
     def __init__(self, mat):
@@ -16,13 +12,14 @@ class alg:
 
     def minimize(self):
         for i in xrange(self.l):
-            for j in xrange(self.l):
-                if i == j:
-                    self.conts[i][j] = sum([sum(p**2 for p in
-                        self.mat[i][k]) for k in xrange(self.l)])
-                else:
-                    self.conts[i][j] = -sum(p1*p2 for (p1,p2) in
-                            zip(self.mat[i][j], self.mat[j][i]))
+            self.conts[i][i] = sum(sum(p*p for p in
+                self.mat[j][i]) for j in xrange(self.l))
+            for j in xrange(i+1, self.l):
+                tmp = -sum(p1*p2 for p1, p2 in zip(self.mat[i][j],
+                    self.mat[j][i]))
+
+                self.conts[i][j] = tmp
+                self.conts[j][i] = tmp
 
         a = linalg.svd(self.conts)
 
@@ -33,7 +30,7 @@ class alg:
         return self.vec
 
     def contribution(self, i, j):
-        return self.conts[i][j]/self.conts[i][i]
+        return -self.conts[i][j]/self.conts[i][i]
 
     def E(self):
         return 0
