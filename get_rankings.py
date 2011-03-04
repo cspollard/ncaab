@@ -27,7 +27,7 @@ games = c.games().values()
 
 l = len(teams)
 team_dict = dict(zip(teams, xrange(l)))
-scores = zeros((l, l))
+scores = l*[l*[[]]]
 
 n = datetime.now()
 
@@ -75,8 +75,8 @@ for g in games:
         p1 = g.score(t1)*home_bonus
         p2 = g.score(t2)*away_bonus
 
-    scores[team_dict[t1]][team_dict[t2]] += p1
-    scores[team_dict[t2]][team_dict[t1]] += p2
+    scores[team_dict[t1]][team_dict[t2]].append(p1)
+    scores[team_dict[t2]][team_dict[t1]].append(p2)
 
 
 a = alg(scores)
