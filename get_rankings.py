@@ -22,13 +22,23 @@ def gcmp(g1, g2):
     else:
         return 0
 
+def make_list(n, m):
+    l = []
+    for i in xrange(n):
+        l.append([])
+        for j in xrange(m):
+            l[i].append([])
+
+    return l
+
+
 c = crawler(filename=argv[1])
 teams = c.teams().values()
 games = c.games().values()
 
 l = len(teams)
 team_dict = dict(zip(teams, xrange(l)))
-scores = l*[l*[[]]]
+scores = make_list(l, l)
 
 n = datetime.now()
 
@@ -75,15 +85,8 @@ for g in games:
         p1 = g.score(t1)*home_bonus
         p2 = g.score(t2)*away_bonus
 
-    if scores[team_dict[t1]][team_dict[t2]]:
-        scores[team_dict[t1]][team_dict[t2]].append(p1)
-    else:
-        scores[team_dict[t1]][team_dict[t2]] = [p1]
-
-    if scores[team_dict[t2]][team_dict[t1]]:
-        scores[team_dict[t2]][team_dict[t1]].append(p2)
-    else:
-        scores[team_dict[t2]][team_dict[t1]] = [p2]
+    scores[team_dict[t1]][team_dict[t2]].append(p1)
+    scores[team_dict[t2]][team_dict[t1]].append(p2)
 
 a = alg(scores)
 vec = a.minimize()

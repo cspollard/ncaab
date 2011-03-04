@@ -7,7 +7,6 @@ class alg:
     def __init__(self, mat):
         self.mat = mat
         self.l = len(self.mat)
-        self.vec = empty(self.l)
         self.conts = empty((self.l, self.l))
 
     def minimize(self):
