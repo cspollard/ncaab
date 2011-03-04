@@ -1,5 +1,5 @@
 # alg class
-from numpy import array, empty, linalg, zeros
+from numpy import array, empty, linalg, zeros, outer, tensordot
 from numpy import abs as nabs
 from datetime import datetime
 
@@ -32,4 +32,4 @@ class alg:
         return -self.conts[i][j]/self.conts[i][i]
 
     def E(self):
-        return 0
+        return tensordot(outer(self.vec, self.vec), self.conts)
