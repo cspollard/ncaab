@@ -7,6 +7,7 @@ if len(argv) < 2:
 
 if len(argv) > 2:
     url = argv[2]
+    print "Getting data from", url
 else:
     url = None
 

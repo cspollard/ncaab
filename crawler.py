@@ -20,9 +20,9 @@ class crawler:
                 self.rooturl = url
             else:
                 self.rooturl = "http://kenpom.com/cbbga11.txt"
-                self.teamsdict = {} 
-                self.gamesdict = {} 
-                self.initialize()
+            self.teamsdict = {} 
+            self.gamesdict = {} 
+            self.initialize()
 
     def load_from_file(self, filename):
         f = open(filename, "r")
@@ -97,7 +97,6 @@ class crawler:
             if len(data) > j+1:
                 if data[j+1].upper().find('N') != -1:
                     home = -1
-
 
             g = game(d, teams, scores, home)
             self.gamesdict[g.idx()] = g
