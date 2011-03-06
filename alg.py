@@ -29,7 +29,7 @@ class alg:
         return self.vec
 
     def contribution(self, i, j):
-        return -self.conts[i][j]/self.conts[i][i]
+        return -self.conts[i][j]*self.vec[j]/self.conts[i][i]
 
     def E(self):
         return tensordot(outer(self.vec, self.vec), self.conts)
