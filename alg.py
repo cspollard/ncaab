@@ -1,7 +1,6 @@
 # alg class
-from numpy import array, empty, linalg, zeros, outer, tensordot
-from numpy import abs as nabs
-from datetime import datetime
+from numpy import empty, linalg, outer, \
+        tensordot, abs as nabs
 
 class alg:
     def __init__(self, mat):

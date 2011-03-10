@@ -129,3 +129,4 @@ for t in teams:
         sos += opp.value()
 
     print "\t\tSOS: %+6f" % (sos/t.ngames())
+    print "\t\tconts: %+6f" % a.conts[team_dict[t]][team_dict[t]]
