@@ -2,9 +2,6 @@
 
 import re
 import urllib2
-from threading import Thread, Lock
-import BeautifulSoup
-import pickle
 from sys import stdout
 from datetime import datetime
 from team import team
