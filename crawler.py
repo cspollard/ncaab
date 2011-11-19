@@ -3,11 +3,13 @@ from subprocess import call
 from numpy import zeros, resize
 from scipy.sparse import csr_matrix
 
-def crawl(filename=None, url=None):
+def crawl(filename=None, url=None, update=0):
     if not filename:
         filename = "cbbga12.txt"
-        if not url:
-            url = "http://kenpom.com/cbbga12.txt"
+    if not url:
+        url = "http://kenpom.com/cbbga12.txt"
+    if update:
+        call(["rm", filename])
         call(["wget", url])
 
     f = open(filename)
@@ -49,12 +51,10 @@ def crawl(filename=None, url=None):
         if team1 not in teamsdict:
             teamsdict[team1] = nteams
             nteams += 1
-            print team1
 
         if team2 not in teamsdict:
             teamsdict[team2] = nteams
             nteams += 1
-            print team2
 
         if 'N' in extra or 'n' in extra:
             neutgames[teamsdict[team1], teamsdict[team2]] += score1
