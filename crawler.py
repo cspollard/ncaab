@@ -61,12 +61,11 @@ def crawl(filename=None, url=None, update=0):
             neutgames[teamsdict[team2], teamsdict[team1]] += score2
 
         else:
-            homegames[teamsdict[team1], teamsdict[team2]] += score1
-            awaygames[teamsdict[team2], teamsdict[team1]] += score2
+            awaygames[teamsdict[team1], teamsdict[team2]] += score1
+            homegames[teamsdict[team2], teamsdict[team1]] += score2
 
     mats = (homegames, awaygames, neutgames)
     for mat in mats:
         resize(mat, (nteams, nteams))
-        mat = csr_matrix(mat)
 
     return teamsdict, mats
