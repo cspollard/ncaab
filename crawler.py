@@ -1,119 +1,72 @@
-# crawler class
+# imports ncaabb data from kenpom.com
+from subprocess import call
+from numpy import zeros, resize
+from scipy.sparse import csr_matrix
 
-import re
-import urllib2
-from sys import stdout
-from datetime import datetime
-from team import team
-from game import game
-from teamslist import teamslist
+def crawl(filename=None, url=None):
+    if not filename:
+        filename = "cbbga12.txt"
+        if not url:
+            url = "http://kenpom.com/cbbga12.txt"
+        call(["wget", url])
 
-class crawler:
-    def __init__(self, filename=None, url=None):
-        if filename:
-            self.load_from_file(filename)
+    f = open(filename)
+    games = f.readlines()
+    f.close()
+
+    nteams = 0
+    teamsdict = {}
+    homegames = zeros((500,500))
+    awaygames = zeros((500,500))
+    neutgames = zeros((500,500))
+
+    for g in games:
+        data = g.split()[1:]
+
+        # get the teams and scores from the game.
+        i = 1
+        while 1:
+            try:
+                score1 = int(data[i])
+                break
+            except ValueError:
+                i += 1
+
+        team1 = " ".join(data[:i])
+
+        j = i+2
+        while 1:
+            try:
+                score2 = int(data[j])
+                break
+            except ValueError:
+                j += 1
+
+        team2 = " ".join(data[i+1:j])
+
+        extra = '' if len(data) == j+1 else data[j+1]
+
+        if team1 not in teamsdict:
+            teamsdict[team1] = nteams
+            nteams += 1
+            print team1
+
+        if team2 not in teamsdict:
+            teamsdict[team2] = nteams
+            nteams += 1
+            print team2
+
+        if 'N' in extra or 'n' in extra:
+            neutgames[teamsdict[team1], teamsdict[team2]] += score1
+            neutgames[teamsdict[team2], teamsdict[team1]] += score2
+
         else:
-            if url:
-                self.rooturl = url
-            else:
-                self.rooturl = "http://kenpom.com/cbbga11.txt"
-            self.teamsdict = {} 
-            self.gamesdict = {} 
-            self.initialize()
+            homegames[teamsdict[team1], teamsdict[team2]] += score1
+            awaygames[teamsdict[team2], teamsdict[team1]] += score2
 
-    def load_from_file(self, filename):
-        f = open(filename, "r")
-        lines = f.readlines()
-        f.close()
+    mats = (homegames, awaygames, neutgames)
+    for mat in mats:
+        resize(mat, (nteams, nteams))
+        mat = csr_matrix(mat)
 
-        self.teamsdict = {}
-        self.gamesdict = {}
-
-        for line in lines:
-            tmp = line.split(',')
-            year = int(tmp[0][:4])
-            month = int(tmp[0][4:6])
-            day = int(tmp[0][6:])
-            date = datetime(year, month, day)
-            t1 = self.teamsdict.setdefault(tmp[1], team(tmp[1]))
-            t2 = self.teamsdict.setdefault(tmp[2], team(tmp[2]))
-            scores = map(int, tmp[3:5])
-            home = int(tmp[5])
-            g = game(date, [t1, t2], scores, home)
-            self.gamesdict.setdefault(g.idx(), g)
-            t1.add_games([g])
-            t2.add_games([g])
-
-    def initialize(self):
-        print "initializing..."
-        stdout.flush()
-        tmp = urllib2.urlopen(self.rooturl)
-        lines = tmp.read().split('\n')
-
-        for line in lines:
-            data = line.split()
-            if len(data) < 4:
-                continue
-
-            scores = []
-            i = 2
-            while 1:
-                try:
-                    scores.append(int(data[i]))
-                    break
-                except ValueError:
-                    i += 1
-
-            teamname1 = " ".join(data[1:i])
-            if teamname1 not in teamslist:
-                continue
-
-            if teamname1 not in self.teamsdict:
-                self.teamsdict[teamname1] = team(teamname1)
-
-            j = i+2
-            while 1:
-                try:
-                    scores.append(int(data[j]))
-                    break
-                except ValueError:
-                    j += 1
-
-            teamname2 = " ".join(data[i+1:j])
-            if teamname2 not in teamslist:
-                continue
-
-            if teamname2 not in self.teamsdict:
-                self.teamsdict[teamname2] = team(teamname2)
-
-            teams = [self.teamsdict[teamname1], self.teamsdict[teamname2]]
-
-            d = datetime.strptime(data[0], "%m/%d/%Y")
-
-            home = 1
-            if len(data) > j+1:
-                if data[j+1].upper().find('N') != -1:
-                    home = -1
-
-            g = game(d, teams, scores, home)
-            self.gamesdict[g.idx()] = g
-
-            self.teamsdict[teamname1].add_games([g])
-            self.teamsdict[teamname2].add_games([g])
-
-    def save(self, filename):
-        f = open(filename, "w")
-        for game in self.gamesdict.itervalues():
-            f.write("%s,%s,%s,%03d,%03d,%02d\n" %
-                    (game.date().strftime("%Y%m%d"),
-                        game.teams()[0].name(),
-                        game.teams()[1].name(), game.scores()[0],
-                        game.scores()[1], game.home()))
-
-        f.close()
-
-    def teams(self):
-        return self.teamsdict
-
-    def games(self):
-        return self.gamesdict
+    return teamsdict, mats
