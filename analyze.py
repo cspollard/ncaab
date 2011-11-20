@@ -22,16 +22,12 @@ def main():
     sym = (scores + scores.T) / 2
     # asym = (scores - scores.T) / 2
     normed = scores/(2*sym + (sym == 0))
-    # print normed
     # ratio = scores/(scores.T + (scores.T == 0))
     exped = expm2(normed)
     exped -= diag(diag(exped))
     probs = exped/((exped + exped.T) + (exped == 0))
-    print probs
     probs = probs.sum(axis=1)
-    print probs
     probs /= (exped != 0).sum(axis=1) - 1
-    print probs
 
     teamval = []
     for team, n in teamsdict.items():
@@ -39,8 +35,9 @@ def main():
 
     teamval = sorted(teamval, key=lambda t: -t[1])
 
+    norm = teamval[0][1]
     for team in teamval:
-        print team[0].rjust(30), "%2f" % team[1]
+        print team[0].rjust(30), "%2f" % (team[1]/norm)
 
 if __name__ == "__main__":
     main()
