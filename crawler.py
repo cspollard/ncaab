@@ -64,8 +64,9 @@ def crawl(filename=None, url=None, update=0):
             awaygames[teamsdict[team1], teamsdict[team2]] += score1
             homegames[teamsdict[team2], teamsdict[team1]] += score2
 
+    homegames = homegames[:nteams,:nteams]
+    awaygames = awaygames[:nteams,:nteams]
+    neutgames = neutgames[:nteams,:nteams]
     mats = (homegames, awaygames, neutgames)
-    for mat in mats:
-        resize(mat, (nteams, nteams))
 
     return teamsdict, mats

@@ -1,6 +1,7 @@
 # analyzes data coming from the crawler.
 from sys import argv
 from crawler import crawl
+from numpy import diag
 from scipy.linalg import expm3, expm2
 from teamslist import teamslist
 
@@ -19,22 +20,27 @@ def main():
     scores = homescores + awayscores + neutscores
 
     sym = (scores + scores.T) / 2
-    asym = (scores - scores.T) / 2
+    # asym = (scores - scores.T) / 2
     normed = scores/(2*sym + (sym == 0))
-    exped = expm3(normed, 50)
+    # print normed
+    # ratio = scores/(scores.T + (scores.T == 0))
+    exped = expm2(normed)
+    exped -= diag(diag(exped))
+    probs = exped/((exped + exped.T) + (exped == 0))
+    print probs
+    probs = probs.sum(axis=1)
+    print probs
+    probs /= (exped != 0).sum(axis=1) - 1
+    print probs
 
     teamval = []
-    for team in teamsdict:
-        teamval.append([team,
-            exped[teamsdict[team]][0]/exped[0][teamsdict[team]],
-            exped[teamsdict[team]][1]/exped[1][teamsdict[team]],
-            exped[teamsdict[team]][2]/exped[2][teamsdict[team]]])
+    for team, n in teamsdict.items():
+        teamval.append([team, probs[n]])
 
     teamval = sorted(teamval, key=lambda t: -t[1])
 
     for team in teamval:
-        print team[0].rjust(30), "%2f %2f %2f %2f" % (team[1], team[2],
-                team[3], team[1]/team[2])
+        print team[0].rjust(30), "%2f" % team[1]
 
 if __name__ == "__main__":
     main()
