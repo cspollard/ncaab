@@ -1,41 +1,6 @@
 # analyzes data coming from the crawler.
-from sys import argv
-from crawler import crawl
 from numpy import diag, abs as nabs, dot, nan_to_num
 from scipy.linalg import expm3, expm2, svd
-from teamslist import teamslist
-from itertools import permutations
-
-def main():
-    (teamsdict, (homescores, awayscores, neutscores)) = \
-            crawl(update=0, bb=0)
-
-    # normalize scores.
-    homescores, awayscores, neutscores = norm_venues(homescores,
-            awayscores, neutscores)
-
-    # get final scores matrix.
-    scores = homescores + awayscores + neutscores
-    # scores = (scores > scores.T)
-
-    # games = [("North Carolina", "Mississippi Valley St."), ("Alabama",
-        # "Purdue"), ("North Carolina", "Duke"), ("Duke",
-            # "North Carolina"), ("Old Dominion", "Kentucky"),
-            # ("Mississippi", "Marquette")]
-
-    # games = permutations(["Alabama", "Arkansas", "Oklahoma", \
-            # "Virginia Tech", "Oklahoma State", "Louisiana State",
-            # "Stanford", "Oregon", "Southern Cal"], 2)
-    # print_probs(teamsdict, scores, games)
-
-    # print; print
-
-    vals = prob_network_ratings(scores)
-    # vals = energy_min(scores)
-
-    print_values(teamsdict, vals)
-
-
 
 def print_values(teamsdict, vals):
 
@@ -96,7 +61,3 @@ def norm_venues(homescores, awayscores, neutscores):
     neutscores /= neutnorm
 
     return homescores, awayscores, neutscores
-
-
-if __name__ == "__main__":
-    main()
