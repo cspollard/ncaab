@@ -26,10 +26,12 @@ def main():
 
     # print; print
 
-    vals = prob_network_ratings(scores)
-    # vals = energy_min(scores)
+    valsp = prob_network_ratings(scores)
+    valse = energy_min(scores)
+    vals = [valsp, valse]
 
-    print_values(teamsdict, vals)
+    print_values(teamsdict, teamslist, vals)
+    plot_values(teamsdict, teamslist, vals)
 
 
 if __name__ == "__main__":
