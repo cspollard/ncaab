@@ -1,9 +1,5 @@
 # analyzes data coming from the crawler.
-<<<<<<< HEAD
-from numpy import diag, abs as nabs, dot
-=======
 from numpy import diag, abs as nabs, dot, nan_to_num, array as narray
->>>>>>> 3332489c3ae0cd56c3127ee4b862a31e0657fcb6
 from scipy.linalg import expm3, expm2, svd
 from matplotlib.pyplot import plot as plt, show, xlim, ylim
 
@@ -33,7 +29,7 @@ def plot_values(teamsdict, teamslist, vals):
 
     v = zip(*v)
 
-    plt(v, 'rx')
+    plt(v[0], v[1], 'rx')
     show()
 
 

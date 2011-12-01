@@ -9,8 +9,8 @@ def main():
             crawl(update=0, bb=1)
 
     # normalize scores.
-    homescores, awayscores, neutscores = norm_venues(homescores,
-            awayscores, neutscores)
+    # homescores, awayscores, neutscores = norm_venues(homescores,
+            # awayscores, neutscores)
 
     # get final scores matrix.
     scores = homescores + awayscores + neutscores
