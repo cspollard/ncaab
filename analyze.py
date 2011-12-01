@@ -1,17 +1,36 @@
 # analyzes data coming from the crawler.
-from numpy import diag, abs as nabs, dot, nan_to_num
+from numpy import diag, abs as nabs, dot, nan_to_num, array as narray
 from scipy.linalg import expm3, expm2, svd
+from matplotlib.pyplot import plot as plt, show, xlim, ylim
 
-def print_values(teamsdict, vals):
+def print_values(teamsdict, teamslist, vals):
 
     teamval = []
-    for team, n in teamsdict.items():
-        teamval.append([team, vals[n]])
+    for team in teamslist:
+        if team in teamsdict:
+            tvals = [team]
+            for valset in vals:
+                tvals.append(valset[teamsdict[team]])
+            teamval.append(tvals)
 
     teamval = sorted(teamval, key=lambda t: -t[1])
 
     for i in xrange(len(teamval)):
-        print (teamval[i][0] + " %03d" % (i+1)).rjust(30), "%2f" % (teamval[i][1])
+        print (teamval[i][0] + " %03d" % (i+1)).rjust(30), \
+                " ".join(["%.3f" % v for v in teamval[i][1:]])
+
+
+def plot_values(teamsdict, teamslist, vals):
+    vals = narray(vals).T
+    v = []
+    for team in teamslist:
+        if team in teamsdict:
+            v.append(vals[teamsdict[team]])
+
+    v = zip(*v)
+
+    plt(v, 'rx')
+    show()
 
 
 def print_probs(teamsdict, scores, games):
@@ -60,4 +79,8 @@ def norm_venues(homescores, awayscores, neutscores):
     awayscores /= awaynorm
     neutscores /= neutnorm
 
+
+    print "homenorm", homenorm
+    print "awaynorm", awaynorm
+    print "neutnorm", neutnorm
     return homescores, awayscores, neutscores
