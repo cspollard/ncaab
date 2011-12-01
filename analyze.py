@@ -1,5 +1,5 @@
 # analyzes data coming from the crawler.
-from numpy import diag, abs as nabs, dot, nan_to_num
+from numpy import diag, abs as nabs, dot
 from scipy.linalg import expm3, expm2, svd
 
 def print_values(teamsdict, vals):
@@ -29,7 +29,7 @@ def prob_network(scores):
     exped -= diag(diag(exped))
 
     # divide by symmetric part.
-    return exped/((exped + exped.T) + (exped == 0))
+    return exped/((exped + exped.T) + (exped == 0) + (exped.T == 0))
 
 
 def prob_network_ratings(scores):
@@ -55,6 +55,10 @@ def norm_venues(homescores, awayscores, neutscores):
     homenorm = homescores.sum()/(homescores != 0).sum()
     awaynorm = awayscores.sum()/(awayscores != 0).sum()
     neutnorm = neutscores.sum()/(neutscores != 0).sum()
+
+    print "each home point is worth %4f points" % (1/homenorm)
+    print "each away point is worth %4f points" % (1/awaynorm)
+    print "each neutral point is worth %4f points" % (1/neutnorm)
 
     homescores /= homenorm
     awayscores /= awaynorm
