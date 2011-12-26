@@ -3,11 +3,17 @@ from numpy import diag, abs as nabs, dot, nan_to_num, array as narray
 from scipy.linalg import expm3, expm2, svd
 from matplotlib.pyplot import plot as plt, show, xlim, ylim
 
-def print_values(teamsdict, teamslist, vals):
-
+def print_values(teamsdict, teamslist, vals, wl):
     teamval = []
-    for team in teamslist:
-        if team in teamsdict:
+    if teamslist:
+        for team in teamslist:
+            if team in teamsdict:
+                tvals = [team]
+                for valset in vals:
+                    tvals.append(valset[teamsdict[team]])
+                teamval.append(tvals)
+    else:
+        for team in teamsdict:
             tvals = [team]
             for valset in vals:
                 tvals.append(valset[teamsdict[team]])
@@ -17,7 +23,9 @@ def print_values(teamsdict, teamslist, vals):
 
     for i in xrange(len(teamval)):
         print (teamval[i][0] + " %03d" % (i+1)).rjust(30), \
+                "%02d-%02d" % wl[teamsdict[teamval[i][0]]], \
                 " ".join(["%.3f" % v for v in teamval[i][1:]])
+
 
 
 def plot_values(teamsdict, teamslist, vals):
