@@ -6,18 +6,19 @@ from analyze import *
 
 def main():
     (teamsdict, (homescores, awayscores, neutscores)) = \
-            crawl(update=0, bb=1)
+            crawl(update=1, bb=0)
 
     # normalize scores.
-    # homescores, awayscores, neutscores = norm_venues(homescores,
-            # awayscores, neutscores)
+    homescores, awayscores, neutscores = norm_venues(homescores,
+            awayscores, neutscores)
 
     # get final scores matrix.
     scores = homescores + awayscores + neutscores
     # scores = (scores > scores.T)
 
     # games = permutations(["Duke", "North Carolina", "Kentucky", \
-            # "Kansas", "Missouri", "Marquette", "Ohio St."], 2)
+            # "Kansas", "Missouri", "Marquette", "Ohio St.", "Indiana",
+            # "Louisville"], 2)
 
     # games = permutations(["Alabama", "Arkansas", "Oklahoma", \
             # "Virginia Tech", "Oklahoma State", "Louisiana State", \
@@ -30,8 +31,13 @@ def main():
     valse = energy_min(scores)
     vals = [valsp, valse]
 
-    print_values(teamsdict, teamslist, vals)
-    plot_values(teamsdict, teamslist, vals)
+    wins = scores > scores.T
+    losses = scores < scores.T
+
+    wl = zip(wins.sum(1), losses.sum(1))
+
+    print_values(teamsdict, teamslist, vals, wl)
+    # plot_values(teamsdict, teamslist, vals)
 
 
 if __name__ == "__main__":
