@@ -81,5 +81,5 @@ teamslist = [
 "South Carolina St.", "Radford", "Toledo", "Texas Pan American",
 "MD Baltimore County", "Central Arkansas", "Arkansas Pine Bluff",
 "Houston Baptist", "Howard", "Maryland Eastern Shore", "Grambling",
-"Prairie View A&M", "Alcorn St.", "SIU Edwardsville", "Centenary",
-"Chicago St.", "Southern"]
+"Prairie View A&M", "Alcorn St.", "SIU Edwardsville", "Chicago St.",
+"Southern"]

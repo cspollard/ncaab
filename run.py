@@ -1,12 +1,12 @@
 from sys import argv
 from crawler import crawl
 from teamslist import teamslist
-from itertools import permutations
 from analyze import *
 
 def main():
+    print len(teamslist)
     (teamsdict, (homescores, awayscores, neutscores)) = \
-            crawl(update=1, bb=0)
+            crawl(update=1, bb=1, url="cbbga13.txt")
 
     # normalize scores.
     homescores, awayscores, neutscores = norm_venues(homescores,
@@ -16,16 +16,12 @@ def main():
     scores = homescores + awayscores + neutscores
     # scores = (scores > scores.T)
 
-    # games = permutations(["Duke", "North Carolina", "Kentucky", \
-            # "Kansas", "Missouri", "Marquette", "Ohio St.", "Indiana",
-            # "Louisville"], 2)
+    games = [("Kansas", "Ohio St."), ("Louisville", "Kentucky")]
 
-    # games = permutations(["Alabama", "Arkansas", "Oklahoma", \
-            # "Virginia Tech", "Oklahoma State", "Louisiana State", \
-            # "Stanford", "Oregon", "Southern Cal"], 2)
-    # print_probs(teamsdict, scores, games)
 
-    # print; print
+    print_probs(teamsdict, scores, games)
+
+    print; print
 
     valsp = prob_network_ratings(scores)
     valse = energy_min(scores)

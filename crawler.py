@@ -22,9 +22,9 @@ def crawl(filename=None, url=None, update=0, bb=1):
 def crawl_bb(games):
     nteams = 0
     teamsdict = {}
-    homegames = zeros((600,600))
-    awaygames = zeros((600,600))
-    neutgames = zeros((600,600))
+    homegames = zeros((700,700))
+    awaygames = zeros((700,700))
+    neutgames = zeros((700,700))
 
     for g in games:
         data = g.split()[1:]

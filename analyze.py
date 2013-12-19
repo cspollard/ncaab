@@ -1,7 +1,7 @@
 # analyzes data coming from the crawler.
 from numpy import diag, abs as nabs, dot, nan_to_num, array as narray
 from scipy.linalg import expm3, expm2, svd
-from matplotlib.pyplot import plot as plt, show, xlim, ylim
+# from matplotlib.pyplot import plot as plt, show, xlim, ylim
 
 def print_values(teamsdict, teamslist, vals, wl):
     teamval = []
